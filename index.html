@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Pixelated Cat Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFE8F0 50%, #FFD9E8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.03) 0px,
+                    rgba(0, 0, 0, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+        }
+
+        /* Game Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Title Styles */
+        .title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            color: #C41E3A;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+            animation: pixelBounce 0.6s ease-out;
+        }
+
+        @keyframes pixelBounce {
+            0% {
+                transform: scale(0.8) translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #FF6B9D;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+        }
+
+        .cat-intro {
+            font-size: 4rem;
+            margin: 30px 0;
+            animation: catWave 2s ease-in-out infinite;
+        }
+
+        @keyframes catWave {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #FF6B9D, #FFB6D9);
+            color: white;
+            border: 3px solid #C41E3A;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6);
+        }
+
+        .start-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Game Screens */
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 4px solid #FF6B9D;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Guessing Game */
+        .guess-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #FFB6D9;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Nunito', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .guess-input:focus {
+            outline: none;
+            border-color: #FF6B9D;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
+        }
+
+        .guess-button {
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #333;
+            border: 3px solid #FF6B9D;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .guess-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .guess-button:active {
+            transform: scale(0.98);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            min-height: 30px;
+        }
+
+        .feedback.correct {
+            color: #32CD32;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .feedback.incorrect {
+            color: #FF6347;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Matching Hearts Game */
+        .matching-game {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(180deg, #E8D5F2 0%, #FFF8F0 100%);
+            border: 3px solid #FFB6D9;
+            border-radius: 10px;
+            margin: 20px 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .heart-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #FFB6D9, #FFD700);
+            border: 3px solid #FF6B9D;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .heart-card:hover:not(.matched) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .heart-card.flipped {
+            background: linear-gradient(135deg, #FF6B9D, #FFB6D9);
+            transform: rotateY(180deg);
+        }
+
+        .heart-card.matched {
+            background: linear-gradient(135deg, #32CD32, #90EE90);
+            border-color: #32CD32;
+            animation: matchPulse 0.6s ease-out;
+        }
+
+        .heart-card:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes matchPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #FF6B9D;
+            gap: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Letter Screen */
+        .letter-container {
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFE8F0 100%);
+            border: 4px solid #C41E3A;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            min-height: 400px;
+            box-shadow: 0 10px 40px rgba(196, 30, 58, 0.2);
+            position: relative;
+        }
+
+        .letter-header {
+            font-family: 'Caveat', cursive;
+            font-size: 2rem;
+            color: #C41E3A;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .letter-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+            min-height: 150px;
+            font-family: 'Caveat', cursive;
+        }
+
+        .letter-content.typing {
+            border-right: 3px solid #FF6B9D;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { border-right-color: #FF6B9D; }
+            50%, 100% { border-right-color: transparent; }
+        }
+
+        .letter-button {
+            background: linear-gradient(135deg, #FF6B9D, #FFB6D9);
+            color: white;
+            border: 3px solid #C41E3A;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .letter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .letter-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Gift Boxes Screen */
+        .gifts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 40px;
+        }
+
+        .gift-box {
+            position: relative;
+            cursor: pointer;
+            animation: giftBounce 2s ease-in-out infinite;
+        }
+
+        .gift-box:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .gift-box:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes giftBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        .cat-character {
+            width:120px;
+            height:120px;
+            align-items: center;
+            justify-content: center;
+            image-rendering: pixelated;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .gift-box:hover .cat-character {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .cat-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #FF6B9D;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .gift-label {
+            background: linear-gradient(135deg, #FF6B9D, #FFB6D9);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .gift-box:hover .gift-label {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        /* Gift Content Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #C41E3A;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF6B9D;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #C41E3A;
+            transform: rotate(90deg);
+        }
+
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #FFB6D9, #E8D5F2);
+            border: 3px solid #FF6B9D;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            font-size: 0.85rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-description {
+            transform: translateY(0);
+        }
+
+        /* Music Player */
+        .music-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .music-item {
+            background: linear-gradient(135deg, #FFB6D9, #E8D5F2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #FF6B9D;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .music-icon {
+            font-size: 1.5rem;
+        }
+
+        .music-info {
+            flex: 1;
+        }
+
+        .music-title {
+            font-weight: 700;
+            color: #C41E3A;
+        }
+
+        .music-artist {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Compliments */
+        .compliment-text {
+            background: linear-gradient(135deg, #FFE8F0, #E8D5F2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #FF6B9D;
+            margin: 15px 0;
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Particle Effects */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .game-container {
+                padding: 25px;
+            }
+
+            .gifts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cat-character {
+                font-size: 3rem;
+            }
+
+            .modal-content {
+                padding: 25px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #FFE8F0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF6B9D;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C41E3A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div class="screen start-screen active">
+            <h1 class="title">💕 VALENTINE 💕</h1>
+            <p class="subtitle">Happy Valentine's day Hanii ko💕</p>
+            <div class="cat-intro">🐱</div>
+            <p style="font-size: 1.1rem; color: #666; margin-bottom: 20px;">Let's play some games and celebrate our love!</p>
+            <button class="start-button" onclick="startGame()">START GAME</button>
+        </div>
+
+        <!-- Guessing Couple Year Game -->
+        <div class="screen" id="guessScreen">
+            <div class="game-container">
+                <h2 class="title">💕 GUESS OUR YEAR 💕</h2>
+                <p class="subtitle">What year did we start dating?</p>
+                <input type="number" class="guess-input" id="yearInput" placeholder="Enter year">
+                <button class="guess-button" onclick="checkYear()">SUBMIT</button>
+                <div class="feedback" id="yearFeedback"></div>
+                <button class="guess-button" onclick="nextGame()" style="margin-top: 20px; display: none;" id="nextYearBtn">NEXT GAME →</button>
+            </div>
+        </div>
+
+        <!-- Guessing First Day Game -->
+        <div class="screen" id="firstDayScreen">
+            <div class="game-container">
+                <h2 class="title">📅 GUESS OUR DAY 📅</h2>
+                <p class="subtitle">What date was our first day together?</p>
+                <input type="text" class="guess-input" id="dateInput" placeholder="MM/DD/YYYY">
+                <button class="guess-button" onclick="checkFirstDay()">SUBMIT</button>
+                <div class="feedback" id="dateFeedback"></div>
+                <button class="guess-button" onclick="nextGame()" style="margin-top: 20px; display: none;" id="nextDateBtn">NEXT GAME →</button>
+            </div>
+        </div>
+
+        <!-- Matching Hearts Game -->
+        <div class="screen" id="craneScreen">
+            <div class="game-container">
+                <h2 class="title">💗 MATCH HEARTS 💗</h2>
+                <p class="subtitle">Find all matching pairs!</p>
+                <div class="matching-game" id="matchingGame">
+                    <div class="game-grid" id="gameGrid"></div>
+                    <div class="game-stats">
+                        <div class="stat-item">Moves: <span id="moveCount">0</span></div>
+                        <div class="stat-item">Matched: <span id="matchedCount">0</span>/6</div>
+                    </div>
+                </div>
+                <button class="guess-button" onclick="nextGame()" style="margin-top: 20px; display: none;" id="nextCraneBtn">NEXT GAME →</button>
+            </div>
+        </div>
+
+        <!-- Letter Screen -->
+        <div class="screen" id="letterScreen">
+            <div class="letter-container">
+                <div class="letter-header">My ONE and Only Hanii💕,</div>
+                <div class="letter-content" id="letterContent"></div>
+                <button class="letter-button" onclick="nextGame()" style="display: none;" id="nextLetterBtn">Open Your Gifts →</button>
+            </div>
+        </div>
+
+        <!-- Gifts Screen -->
+        <div class="screen" id="giftsScreen">
+            <h1 class="title">🎁 YOUR GIFTS 🎁</h1>
+            <p class="subtitle">Click on each cat to see their gift!</p>
+            <div class="gifts-container">
+                <div class="gift-box" onclick="openGift('lalay')">
+                   <img src="lalay.jpg" class="cat-character" alt="Cute Cat">
+                    <div class="cat-name">LALAY</div>
+                    <div class="gift-label">10 Pictures</div>
+                </div>
+                <div class="gift-box" onclick="openGift('chitchay')">
+                    <img src="chitchay.jpg" class="cat-character" alt="Cute Cat">
+                    <div class="cat-name">CHITCHAY</div>
+                    <div class="gift-label">Favorite Music</div>
+                </div>
+                <div class="gift-box" onclick="openGift('kikay')">
+                     <img src="kikay.jpg" class="cat-character" alt="Cute Cat">
+                    <div class="cat-name">KIKAY</div>
+                    <div class="gift-label">Compliments</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Gift Content -->
+    <div class="modal" id="giftModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGift()">✕</button>
+            <div class="modal-header" id="modalTitle"></div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const COUPLE_YEAR = 2023; // Change this to your actual year
+        const FIRST_DAY = "06/11/2023"; // Change this to your actual first day (MM/DD/YYYY)
+
+        const LOVE_LETTER = `
+            Every moment with you feels like a beautiful dream I never want to wake up from.
+            Your smile brightens my darkest days, and your laughter is the sweetest music to my ears.
+            I fall in love with you more and more each day, in the smallest moments and the biggest adventures.
+            Thank you for being my cute and beautifull hanii 💕, my partner💕, and my greatest love💕.
+            Forever yours, with all my heart, 💕i love you so much hanii ko💕.HAPPY VALENTINE'S DAY hanii ko💕
+        `;
+
+        // ===== GAME STATE =====
+        let currentScreen = 0;
+        let craneScore = 0;
+        const screens = ['start', 'guess', 'firstDay', 'crane', 'letter', 'gifts'];
+
+        // ===== SCREEN MANAGEMENT =====
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            if (screen) {
+                screen.classList.add('active');
+            }
+        }
+
+        function startGame() {
+            showScreen('guessScreen');
+            createParticles(event);
+        }
+
+        function nextGame() {
+            const nextScreens = {
+                'guessScreen': 'firstDayScreen',
+                'firstDayScreen': 'craneScreen',
+                'craneScreen': 'letterScreen',
+                'letterScreen': 'giftsScreen'
+            };
+
+            for (let [current, next] of Object.entries(nextScreens)) {
+                if (document.getElementById(current).classList.contains('active')) {
+                    if (next === 'letterScreen') {
+                        startLetter();
+                    }
+                    showScreen(next);
+                    createParticles(event);
+                    break;
+                }
+            }
+        }
+
+        // ===== GUESSING GAME =====
+        function checkYear() {
+            const input = document.getElementById('yearInput');
+            const feedback = document.getElementById('yearFeedback');
+            const year = parseInt(input.value);
+
+            if (year === COUPLE_YEAR) {
+                feedback.textContent = '✨ CORRECT! ✨ That\'s our year!';
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                document.getElementById('nextYearBtn').style.display = 'block';
+                createParticles(event);
+            } else {
+                feedback.textContent = year < COUPLE_YEAR ? '📈 Try a later year!' : '📉 Try an earlier year!';
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+            }
+        }
+
+        function checkFirstDay() {
+            const input = document.getElementById('dateInput');
+            const feedback = document.getElementById('dateFeedback');
+            const date = input.value;
+
+            if (date === FIRST_DAY) {
+                feedback.textContent = '✨ CORRECT! ✨ That\'s our special day!';
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                document.getElementById('nextDateBtn').style.display = 'block';
+                createParticles(event);
+            } else {
+                feedback.textContent = '❌ Not quite! Try again!';
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+            }
+        }
+
+        // ===== MATCHING HEARTS GAME =====
+        let gameState = {
+            cards: [],
+            flipped: [],
+            matched: [],
+            moves: 0,
+            isChecking: false
+        };
+
+        const heartEmojis = ['❤️', '💕', '💖', '💗', '💝', '💘'];
+
+        function initCraneGame() {
+            gameState = {
+                cards: [],
+                flipped: [],
+                matched: [],
+                moves: 0,
+                isChecking: false
+            };
+
+            // Create pairs of hearts
+            const pairs = [...heartEmojis, ...heartEmojis];
+            gameState.cards = pairs.sort(() => Math.random() - 0.5);
+
+            const gameGrid = document.getElementById('gameGrid');
+            gameGrid.innerHTML = '';
+
+            gameState.cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'heart-card';
+                card.dataset.index = index;
+                card.dataset.emoji = emoji;
+                card.textContent = '💝';
+                card.onclick = () => flipCard(card, index);
+                gameGrid.appendChild(card);
+            });
+
+            document.getElementById('moveCount').textContent = '0';
+            document.getElementById('matchedCount').textContent = '0';
+        }
+
+        function flipCard(cardElement, index) {
+            if (gameState.isChecking) return;
+            if (gameState.flipped.includes(index)) return;
+            if (gameState.matched.includes(index)) return;
+
+            gameState.flipped.push(index);
+            cardElement.classList.add('flipped');
+            cardElement.textContent = gameState.cards[index];
+            createParticles(event);
+
+            if (gameState.flipped.length === 2) {
+                gameState.isChecking = true;
+                gameState.moves++;
+                document.getElementById('moveCount').textContent = gameState.moves;
+
+                setTimeout(() => {
+                    checkMatch();
+                }, 600);
+            }
+        }
+
+        function checkMatch() {
+            const [index1, index2] = gameState.flipped;
+            const card1 = document.querySelector(`[data-index="${index1}"]`);
+            const card2 = document.querySelector(`[data-index="${index2}"]`);
+
+            if (gameState.cards[index1] === gameState.cards[index2]) {
+                // Match found
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                gameState.matched.push(index1, index2);
+                document.getElementById('matchedCount').textContent = gameState.matched.length / 2;
+
+                if (gameState.matched.length === gameState.cards.length) {
+                    // Game won
+                    setTimeout(() => {
+                        document.getElementById('nextCraneBtn').style.display = 'block';
+                    }, 500);
+                }
+            } else {
+                // No match
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                card1.textContent = '💝';
+                card2.textContent = '💝';
+            }
+
+            gameState.flipped = [];
+            gameState.isChecking = false;
+        }
+
+        // ===== LETTER SCREEN =====
+        function startLetter() {
+            const letterContent = document.getElementById('letterContent');
+            letterContent.textContent = '';
+            letterContent.classList.add('typing');
+
+            let index = 0;
+            const text = LOVE_LETTER.trim();
+
+            function typeText() {
+                if (index < text.length) {
+                    letterContent.textContent += text[index];
+                    index++;
+                    setTimeout(typeText, 50);
+                } else {
+                    letterContent.classList.remove('typing');
+                    document.getElementById('nextLetterBtn').style.display = 'block';
+                }
+            }
+
+            typeText();
+        }
+
+        // ===== GIFT BOXES =====
+        function openGift(catName) {
+            const modal = document.getElementById('giftModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            if (catName === 'lalay') {
+                title.textContent = '🧡 LALAY\'S GIFT - 10 PICTURES';
+                body.innerHTML = `
+                    <div class="gallery">
+                        <div class="gallery-item">
+                            <img src ="hanii.jpg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                        <div class="gallery-item">
+                           <img src ="hanii1.jpg" alt=" ">
+                            <div class="gallery-description">r</div>
+                        </div>
+                        <div class="gallery-item">
+                           <img src "ako.jpeg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                         <div class="gallery-item">
+                           <img src ="hanii2.jpg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                         <div class="gallery-item">
+                           <img src ="hanii3.jpg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                         <div class="gallery-item">
+                           <img src ="ako1.jpeg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                        <div class="gallery-item">
+                           <img src ="hanii4.jpg" alt=" ">
+                            <div class="gallery-description"></div>
+                        </div>
+                       
+                       
+                `;
+            } else if (catName === 'chitchay') {
+                title.textContent = '🩶 CHITCHAY\'S GIFT - FAVORITE MUSIC';
+                body.innerHTML = `
+                    <div class="music-list">
+                        <div class="music-item">
+                            <div class="music-icon">🎵</div>
+                            <div class="music-info">
+                                <div class="music-title">MY one and only you</div>
+                                <div class="music-artist">your song</div>
+                            </div>
+                        </div>
+                        <div class="music-item">
+                            <div class="music-icon">🎶</div>
+                            <div class="music-info">
+                                <div class="music-title">Aking Pahninga</div>
+                                <div class="music-artist">ft. I ghie</div>
+                            </div>
+                        </div>
+                        <div class="music-item">
+                            <div class="music-icon">🎼</div>
+                            <div class="music-info">
+                                <div class="music-title">Pretty Little Baby</div>
+                                <div class="music-artist">Connie Francis</div>
+                            </div>
+                        </div>
+                    
+                `;
+            } else if (catName === 'kikay') {
+                title.textContent = '🧡🤎 KIKAY\'S GIFT - COMPLIMENTS';
+                body.innerHTML = `
+                    <div class="compliment-text">
+                        💕 You are the most beautiful person I know, inside and out. Your kindness radiates from your smile and touches everyone around you.
+                    </div>
+                    <div class="compliment-text">
+                        ✨ Your intelligence and creativity inspire me every single day. The way you think and solve problems amazes me.
+                    </div>
+                    <div class="compliment-text">
+                        💗 You have the biggest heart and the most genuine compassion. You care deeply about the people you love.
+                    </div>
+                    <div class="compliment-text">
+                        🌟 Your sense of humor makes me laugh until my sides hurt. You bring so much joy and light into my life.
+                    </div>
+                    <div class="compliment-text">
+                        💕 You are my safe place, my home, my everything. With you, I feel complete and truly loved.
+                    </div>
+                    <div class="compliment-text">
+                        🎀 Your strength and resilience inspire me to be a better person. You never give up on your dreams.
+                    </div>
+                    <div class="compliment-text">
+                        💖 The way you love is pure and unconditional. You make me feel like the luckiest person in the world.
+                    </div>
+                    <div class="compliment-text">
+                        ✨ You are my greatest adventure and my favorite person. I want to spend forever with you.
+                    </div>
+                `;
+            }
+
+            modal.classList.add('active');
+            createParticles(event);
+        }
+
+        function closeGift() {
+            document.getElementById('giftModal').classList.remove('active');
+        }
+
+        // ===== PARTICLE EFFECTS =====
+        function createParticles(event) {
+            const particleCount = 15;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = ['💕', '✨', '💗', '🌹'][Math.floor(Math.random() * 4)];
+                particle.style.left = (event?.clientX || window.innerWidth / 2) + 'px';
+                particle.style.top = (event?.clientY || window.innerHeight / 2) + 'px';
+                particle.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 200 - 100 + 'px');
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('guessScreen').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkYear();
+            });
+            document.getElementById('firstDayScreen').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkFirstDay();
+            });
+        });
+
+        // Initialize crane game when screen is shown
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (document.getElementById('craneScreen').classList.contains('active')) {
+                    initCraneGame();
+                }
+            });
+        });
+
+        observer.observe(document.getElementById('craneScreen'), { attributes: true });
+
+        // Close modal on background click
+        document.getElementById('giftModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('giftModal')) {
+                closeGift();
+            }
+        });
+    </script>
+</body>
+</html>
